@@ -1,0 +1,52 @@
+Sub CekQuantity()
+
+  Dim wsSheet1 As Worksheet
+  Dim wsBOM As Worksheet
+  Dim lastRowSheet1 As Long
+  Dim lastRowBOM As Long
+  Dim i As Long
+  Dim qtySheet1 As Double
+  Dim qtyBOM As Double
+  Dim foundMatch As Boolean
+
+  ' Set worksheet objects
+  Set wsSheet1 = ThisWorkbook.Sheets("Sheet1")
+  Set wsBOM = ThisWorkbook.Sheets("BOM")
+
+  ' Find the last row with data in both sheets
+  lastRowSheet1 = wsSheet1.Cells(Rows.Count, "W").End(xlUp).Row
+  lastRowBOM = wsBOM.Cells(Rows.Count, "L").End(xlUp).Row
+
+  ' Loop through each cell in column W of Sheet1
+  For i = 2 To lastRowSheet1
+    ' Get the quantity from Sheet1
+    qtySheet1 = wsSheet1.Cells(i, "W").Value
+
+    ' Reset the foundMatch flag
+    foundMatch = False
+
+    ' Loop through each cell in column L of BOM sheet to find a match
+    For j = 2 To lastRowBOM
+      ' Get the quantity from BOM sheet
+      qtyBOM = wsBOM.Cells(j, "L").Value
+       
+      ' Compare the quantities as doubles (to handle decimal values correctly)
+      If qtySheet1 = qtyBOM Then
+        foundMatch = True
+        Exit For ' Exit the inner loop once a match is found
+      End If
+
+    Next j
+
+    ' Color the cell in Sheet1 based on whether a match was found
+    With wsSheet1.Cells(i, "W").Interior
+      If foundMatch Then
+        .Color = vbYellow
+      Else
+        .Color = vbRed
+      End If
+    End With
+
+  Next i
+
+End Sub
